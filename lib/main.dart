@@ -4,7 +4,7 @@ import 'home_screen.dart';
 import 'package:flutter/services.dart';
 
 void main() {
-  debugPaintSizeEnabled = true;
+  debugPaintSizeEnabled = false;
   runApp(
 
     MaterialApp(
