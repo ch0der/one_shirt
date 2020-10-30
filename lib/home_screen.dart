@@ -30,6 +30,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: body(),
+      backgroundColor: Colors.orange,
     );
   }
 
@@ -45,32 +46,68 @@ class _HomeScreen2State extends State<HomeScreen2> {
     ));
   }
 
-  shirtviewer2() {
-    String shirt = "assets/images/gshirt.png";
-
+  shirtContainer() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(50),
       child: Container(
         height: screenSize(context).height * .8,
         width: screenSize(context).width * .85,
         decoration: BoxDecoration(
-          image: DecorationImage(
-            fit: BoxFit.fitHeight,
-            image: AssetImage(shirt),
-          ),
           color: Colors.grey.withOpacity(.7),
         ),
-        child: Stack(
-          children: [
-            Center(
-              child: Column(
-                children: [
-                  Container(height: 150,),
-                  Transform.scale(scale: 2,child: TShirt(),)
-                ],
-              ),
-            )
-          ],
+      ),
+    );
+  }
+
+  shirtviewer2() {
+    String shirt = "assets/images/gshirt.png";
+
+    return Dismissible(
+      dismissThresholds: {
+        DismissDirection.startToEnd: .5,
+        DismissDirection.endToStart: .5,
+      },
+      crossAxisEndOffset: -.05,
+      key: UniqueKey(),
+      background: shirtContainer(),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(50),
+        child: Container(
+          height: screenSize(context).height * .8,
+          width: screenSize(context).width * .85,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.fitHeight,
+              image: AssetImage(shirt),
+            ),
+            color: Colors.grey.withOpacity(.7),
+          ),
+          child: Stack(
+            children: [
+              Center(
+                child: Column(
+                  children: [
+                    Container(
+                      height: 150,
+                    ),
+                    /*Transform.scale(scale: 2,child: TShirt(),)*/
+                    Opacity(
+                      opacity: .4,
+                      child: Container(
+                        height: 50,
+                        width: 150,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/logo.png'),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
