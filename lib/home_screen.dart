@@ -30,18 +30,41 @@ class _HomeScreen2State extends State<HomeScreen2> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: body(),
-      backgroundColor: Colors.orange,
     );
   }
 
   body() {
     return Center(
-        child: Column(
+        child: Stack(
       children: [
-        Container(
-          height: 60,
+        Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Container(
+                color: Colors.deepOrangeAccent,
+              ),
+            ),
+            Expanded(
+              flex: 8,
+              child: Container(),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                color: Colors.deepPurple,
+              ),
+            ),
+          ],
         ),
-        shirtviewer2()
+        Column(
+          children: [
+            Container(
+              height: 60,
+            ),
+            dragWidget(),
+          ],
+        ),
       ],
     ));
   }
@@ -59,57 +82,72 @@ class _HomeScreen2State extends State<HomeScreen2> {
     );
   }
 
+  dragWidget() {
+    return Draggable(
+      child: shirtviewer2(),
+      feedback: shirtviewer2(),
+      childWhenDragging: shirtContainer(),
+    );
+  }
+
   shirtviewer2() {
     String shirt = "assets/images/gshirt.png";
 
-    return Dismissible(
-      dismissThresholds: {
-        DismissDirection.startToEnd: .5,
-        DismissDirection.endToStart: .5,
-      },
-      crossAxisEndOffset: -.05,
-      key: UniqueKey(),
-      background: shirtContainer(),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(50),
-        child: Container(
-          height: screenSize(context).height * .8,
-          width: screenSize(context).width * .85,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.fitHeight,
-              image: AssetImage(shirt),
-            ),
-            color: Colors.grey.withOpacity(.7),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(50),
+      child: Container(
+        height: screenSize(context).height * .8,
+        width: screenSize(context).width * .85,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            fit: BoxFit.fitHeight,
+            image: AssetImage(shirt),
           ),
-          child: Stack(
-            children: [
-              Center(
-                child: Column(
-                  children: [
-                    Container(
-                      height: 150,
-                    ),
-                    /*Transform.scale(scale: 2,child: TShirt(),)*/
-                    Opacity(
-                      opacity: .4,
-                      child: Container(
-                        height: 50,
-                        width: 150,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/logo.png'),
-                          ),
+          color: Colors.grey.withOpacity(.7),
+        ),
+        child: Stack(
+          children: [
+            Center(
+              child: Container(
+                height: screenSize(context).height * .8,
+                width: screenSize(context).width * .05,
+                color: Colors.greenAccent.withOpacity(.2),
+              ),
+            ),
+            Center(
+              child: Column(
+                children: [
+                  Container(
+                    height: 175,
+                  ),
+                  /*Transform.scale(scale: 2,child: TShirt(),)*/
+                  Opacity(
+                    opacity: .4,
+                    child: Container(
+                      height: 50,
+                      width: 150,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/logo.png'),
                         ),
                       ),
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
         ),
       ),
+    );
+  }
+
+  dragContainer(Color color, Widget child) {
+    return Container(
+      height: screenSize(context).height,
+      width: screenSize(context).width * .2,
+      color: color,
+      child: child,
     );
   }
 
