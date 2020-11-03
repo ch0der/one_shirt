@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'package:random_color/random_color.dart';
 import 'dart:math';
+import 'package:flutter/physics.dart';
 
 class HomeScreen2 extends StatefulWidget {
   @override
@@ -41,9 +42,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
           children: [
             Expanded(
               flex: 1,
-              child: Container(
-                color: Colors.deepOrangeAccent,
-              ),
+              child: Container(),
             ),
             Expanded(
               flex: 8,
@@ -51,42 +50,37 @@ class _HomeScreen2State extends State<HomeScreen2> {
             ),
             Expanded(
               flex: 1,
-              child: Container(
-                color: Colors.deepPurple,
-              ),
+              child: Container(),
             ),
           ],
         ),
-        Column(
-          children: [
-            Container(
-              height: 60,
-            ),
-            dragWidget(),
-          ],
+        ShirtSwiper(shirtviewer2()),
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              buyButton(),
+              Container(height: screenSize(context).height * .06),
+            ],
+          ),
         ),
       ],
     ));
   }
 
-  shirtContainer() {
+  buyButton() {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(50),
+      borderRadius: BorderRadius.circular(10),
       child: Container(
-        height: screenSize(context).height * .8,
-        width: screenSize(context).width * .85,
-        decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(.7),
+        height: screenSize(context).height * .1,
+        width: screenSize(context).width * .55,
+        child: RaisedButton(
+          color: Colors.green[400],
+          onPressed: () {},
+          child: Center(
+          ),
         ),
       ),
-    );
-  }
-
-  dragWidget() {
-    return Draggable(
-      child: shirtviewer2(),
-      feedback: shirtviewer2(),
-      childWhenDragging: shirtContainer(),
     );
   }
 
@@ -94,7 +88,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
     String shirt = "assets/images/gshirt.png";
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(50),
+      borderRadius: BorderRadius.circular(25),
       child: Container(
         height: screenSize(context).height * .8,
         width: screenSize(context).width * .85,
@@ -103,7 +97,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
             fit: BoxFit.fitHeight,
             image: AssetImage(shirt),
           ),
-          color: Colors.grey.withOpacity(.7),
+          color: Colors.blueGrey.withOpacity(1),
         ),
         child: Stack(
           children: [
@@ -111,7 +105,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
               child: Container(
                 height: screenSize(context).height * .8,
                 width: screenSize(context).width * .05,
-                color: Colors.greenAccent.withOpacity(.2),
+                color: Colors.greenAccent.withOpacity(0),
               ),
             ),
             Center(
@@ -120,23 +114,26 @@ class _HomeScreen2State extends State<HomeScreen2> {
                   Container(
                     height: 175,
                   ),
+                  testLogo(),
                   /*Transform.scale(scale: 2,child: TShirt(),)*/
-                  Opacity(
-                    opacity: .4,
-                    child: Container(
-                      height: 50,
-                      width: 150,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/logo.png'),
-                        ),
-                      ),
-                    ),
-                  )
                 ],
               ),
-            )
+            ),
           ],
+        ),
+      ),
+    );
+  }
+  testLogo(){
+    return    Opacity(
+      opacity: .4,
+      child: Container(
+        height: 50,
+        width: 150,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/logo.png'),
+          ),
         ),
       ),
     );
@@ -234,6 +231,99 @@ class _HomeScreen2State extends State<HomeScreen2> {
 
   Size screenSize(BuildContext context) {
     return MediaQuery.of(context).size;
+  }
+}
+
+class ShirtSwiper extends StatefulWidget {
+  final Widget child;
+
+  ShirtSwiper(this.child);
+
+  @override
+  _ShirtSwiperState createState() => _ShirtSwiperState();
+}
+
+class _ShirtSwiperState extends State<ShirtSwiper>
+    with SingleTickerProviderStateMixin {
+  AnimationController _controller;
+  Alignment _dragAlignment = Alignment.center;
+  Animation<Alignment> _animation;
+  double opacity = 1;
+
+  void _runAnimation(Offset pixelsPerSecond, Size size) {
+    _animation = _controller.drive(
+      AlignmentTween(
+        begin: _dragAlignment,
+        end: Alignment.center,
+      ),
+    );
+
+    final unitsPerSecondX = pixelsPerSecond.dx / size.width;
+    final unitsPerSecondY = pixelsPerSecond.dy / size.height;
+    final unitsPerSecond = Offset(unitsPerSecondX, unitsPerSecondY);
+    final unitVelocity = unitsPerSecond.distance;
+
+    const spring = SpringDescription(
+      mass: 40,
+      stiffness: 1,
+      damping: 1,
+    );
+
+    final simulation = SpringSimulation(spring, 0, 1, -unitVelocity);
+
+    _controller.animateWith(simulation);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this);
+
+    _controller.addListener(
+      () {
+        setState(() {
+          _dragAlignment = _animation.value;
+        });
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return GestureDetector(
+      onPanDown: (details) {
+        _controller.stop();
+      },
+      onPanUpdate: (details) {
+        double opacityCheck = _dragAlignment.x.abs();
+        double newOpacity =
+            1 / (1 + (opacityCheck < 1.8 ? 0 : opacity = opacityCheck / 20));
+
+        setState(() {
+          _dragAlignment += Alignment(details.delta.dx / (size.width / 6),
+              details.delta.dy / (size.height / 6));
+          opacity = (newOpacity);
+        });
+        print('$opacityCheck');
+      },
+      onPanEnd: (details) {
+        _runAnimation(details.velocity.pixelsPerSecond, size);
+        setState(() {
+          opacity = 1;
+        });
+      },
+      child: Align(
+        alignment: _dragAlignment,
+        child: Opacity(opacity: opacity, child: widget.child),
+      ),
+    );
   }
 }
 
