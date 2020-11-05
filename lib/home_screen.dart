@@ -77,8 +77,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
         child: RaisedButton(
           color: Colors.green[400],
           onPressed: () {},
-          child: Center(
-          ),
+          child: Center(),
         ),
       ),
     );
@@ -124,8 +123,9 @@ class _HomeScreen2State extends State<HomeScreen2> {
       ),
     );
   }
-  testLogo(){
-    return    Opacity(
+
+  testLogo() {
+    return Opacity(
       opacity: .4,
       child: Container(
         height: 50,
@@ -250,11 +250,19 @@ class _ShirtSwiperState extends State<ShirtSwiper>
   Animation<Alignment> _animation;
   double opacity = 1;
 
-  void _runAnimation(Offset pixelsPerSecond, Size size) {
+  void _dismissAnimation(Offset pixelsPerSecond, Size size) {
+
+    final unitsPerSecondX = pixelsPerSecond.dx / size.width;
+    final unitsPerSecondY = pixelsPerSecond.dy / size.height;
+    final unitsPerSecond = Offset(unitsPerSecondX, unitsPerSecondY);
+
+  }
+
+  void _runAnimation(Offset pixelsPerSecond, Size size, Alignment end) {
     _animation = _controller.drive(
       AlignmentTween(
         begin: _dragAlignment,
-        end: Alignment.center,
+        end: end,
       ),
     );
 
@@ -314,10 +322,18 @@ class _ShirtSwiperState extends State<ShirtSwiper>
         print('$opacityCheck');
       },
       onPanEnd: (details) {
-        _runAnimation(details.velocity.pixelsPerSecond, size);
         setState(() {
           opacity = 1;
         });
+        if (_dragAlignment.x.abs() >= 2.5) {
+          _runAnimation(
+              details.velocity.pixelsPerSecond, size, Alignment.centerLeft);
+
+          print('working');
+        } else {
+          _runAnimation(
+              details.velocity.pixelsPerSecond, size, Alignment.center);
+        }
       },
       child: Align(
         alignment: _dragAlignment,
