@@ -6,9 +6,6 @@ class BuyShirtPage extends StatefulWidget {
 }
 
 class _BuyShirtPageState extends State<BuyShirtPage> {
-  Color buttonColor = Colors.blue;
-  Color selected = Colors.green;
-  Color unselected = Colors.red;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +21,42 @@ class _BuyShirtPageState extends State<BuyShirtPage> {
         Center(
           child: shirtPic(),
         ),
+        sizeRow(),
 
-        detailButton(),
+      ],
+    );
+  }
+  sizeRow(){
+    double padding = 20;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ShirtMenuIcon(
+          button: (){},
+          text: 'S',
+        ),
+        Padding(padding: EdgeInsets.only(left: padding),
+        ),
+        ShirtMenuIcon(
+          button: (){},
+          text: 'M',
+        ),
+        Padding(padding: EdgeInsets.only(left: padding),
+        ),
+        ShirtMenuIcon(
+          button: (){},
+          text: 'L',
+        ),
+        Padding(padding: EdgeInsets.only(left: padding),
+        ),
+        ShirtMenuIcon(
+          button: (){},
+          text: 'XL',
+        ),
+        Padding(padding: EdgeInsets.only(left: padding),
+        ),
+
+
       ],
     );
   }
@@ -45,62 +76,40 @@ class _BuyShirtPageState extends State<BuyShirtPage> {
       ),
     );
   }
-  detailButton(){
-    Color color = unselected;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          unselected = selected;
-        });
-        print(color);
-      },
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(color: color),
-        child: Text('test'),
-      ),
-    );
-  }
-  detailButton2(){
-    Color color;
-    return Container(
-      child:  ShirtMenuIcon(
-        color: color,
-        button: (){
-          setState(() {
-            b
-          });
-        },
-      ),
-    );
-  }
 
 }
 
 class ShirtMenuIcon extends StatefulWidget {
   final VoidCallback button;
-  final Color color;
+  final String text;
 
-  ShirtMenuIcon({@required this.button,@required this.color});
+  ShirtMenuIcon({@required this.button,@required this.text});
 
   @override
   _ShirtMenuIconState createState() => _ShirtMenuIconState();
 }
 
 class _ShirtMenuIconState extends State<ShirtMenuIcon> {
+  bool _selected = false;
   @override
   Widget build(BuildContext context) {
 
     return GestureDetector(
       onTap: () {
+        setState(() {
+          _selected = !_selected;
+
+        });
         widget.button();
       },
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(color:widget.color),
-        child: Text('test'),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(color:_selected == false? Colors.grey[300] : Colors.yellow[300],),
+          child: Center(child: Text(widget.text,style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),),),
+        ),
       ),
     );
   }
