@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:one_shirt/buy_shirt.dart';
 import 'dart:ui' as ui;
 import 'package:random_color/random_color.dart';
 import 'dart:math';
@@ -12,6 +13,9 @@ class HomeScreen2 extends StatefulWidget {
 
 class _HomeScreen2State extends State<HomeScreen2> {
   final double shirtContainerSize = 75;
+  double buyOpacity = 1;
+  String testShirt = 'assets/images/logo.png';
+  String shirt = "assets/images/gshirt.png";
   List<TShirt> shirtList = [
     TShirt(),
     TShirt(),
@@ -30,13 +34,17 @@ class _HomeScreen2State extends State<HomeScreen2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterFloat,
+      floatingActionButton: buyButton2(),
       body: body(),
     );
   }
 
   body() {
-    return Center(
-        child: Stack(
+    return Stack(
+      overflow: Overflow.visible,
+      alignment: AlignmentDirectional.topCenter,
       children: [
         Row(
           children: [
@@ -54,18 +62,21 @@ class _HomeScreen2State extends State<HomeScreen2> {
             ),
           ],
         ),
-        ShirtSwiper(shirtviewer2()),
-        Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              buyButton(),
-              Container(height: screenSize(context).height * .06),
-            ],
-          ),
+        ShirtSwiper(
+          child: shirtviewer2(),
+          onMove: () {
+            setState(() {
+              buyOpacity = 0;
+            });
+          },
+          onMoveEnd: () {
+            setState(() {
+              buyOpacity = 1;
+            });
+          },
         ),
       ],
-    ));
+    );
   }
 
   buyButton() {
@@ -83,44 +94,79 @@ class _HomeScreen2State extends State<HomeScreen2> {
     );
   }
 
-  shirtviewer2() {
-    String shirt = "assets/images/gshirt.png";
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(25),
-      child: Container(
-        height: screenSize(context).height * .8,
-        width: screenSize(context).width * .85,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            fit: BoxFit.fitHeight,
-            image: AssetImage(shirt),
+  buyButton2() {
+    return GestureDetector(
+      onDoubleTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BuyShirtPage(),
           ),
-          color: Colors.blueGrey.withOpacity(1),
-        ),
-        child: Stack(
-          children: [
-            Center(
-              child: Container(
-                height: screenSize(context).height * .8,
-                width: screenSize(context).width * .05,
-                color: Colors.greenAccent.withOpacity(0),
-              ),
-            ),
-            Center(
-              child: Column(
-                children: [
-                  Container(
-                    height: 175,
-                  ),
-                  testLogo(),
-                  /*Transform.scale(scale: 2,child: TShirt(),)*/
-                ],
-              ),
-            ),
-          ],
+        );
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: AnimatedContainer(
+          decoration: BoxDecoration(
+            color: Colors.green.withOpacity(buyOpacity),
+          ),
+          duration: Duration(milliseconds: 200),
+          height: 80,
+          width: 110,
+          child: Center(
+              child: Text(
+            "\$",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 50, color: Colors.grey[50]),
+          )),
         ),
       ),
+    );
+  }
+
+  shirtviewer2() {
+    return Hero(
+      tag: "assets/images/gshirt.png",
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(25),
+        child: Container(
+          height: screenSize(context).height * .8,
+          width: screenSize(context).width * .85,
+          decoration: shirtImage(),
+          child: Stack(
+            children: [
+              Center(
+                child: Container(
+                  height: screenSize(context).height * .8,
+                  width: screenSize(context).width * .05,
+                  color: Colors.greenAccent.withOpacity(0),
+                ),
+              ),
+              Center(
+                child: Column(
+                  children: [
+                    Container(
+                      height: 175,
+                    ),
+                    testLogo(),
+                    /*Transform.scale(scale: 2,child: TShirt(),)*/
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  shirtImage() {
+    return BoxDecoration(
+      image: DecorationImage(
+        fit: BoxFit.fitHeight,
+        image: AssetImage(shirt),
+      ),
+      color: Colors.blueGrey.withOpacity(1),
     );
   }
 
@@ -132,7 +178,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
         width: 150,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/logo.png'),
+            image: AssetImage(testShirt),
           ),
         ),
       ),
@@ -236,8 +282,11 @@ class _HomeScreen2State extends State<HomeScreen2> {
 
 class ShirtSwiper extends StatefulWidget {
   final Widget child;
+  final VoidCallback onMove;
+  final VoidCallback onMoveEnd;
 
-  ShirtSwiper(this.child);
+  ShirtSwiper(
+      {@required this.child, @required this.onMove, @required this.onMoveEnd});
 
   @override
   _ShirtSwiperState createState() => _ShirtSwiperState();
@@ -251,11 +300,9 @@ class _ShirtSwiperState extends State<ShirtSwiper>
   double opacity = 1;
 
   void _dismissAnimation(Offset pixelsPerSecond, Size size) {
-
     final unitsPerSecondX = pixelsPerSecond.dx / size.width;
     final unitsPerSecondY = pixelsPerSecond.dy / size.height;
     final unitsPerSecond = Offset(unitsPerSecondX, unitsPerSecondY);
-
   }
 
   void _runAnimation(Offset pixelsPerSecond, Size size, Alignment end) {
@@ -320,8 +367,10 @@ class _ShirtSwiperState extends State<ShirtSwiper>
           opacity = (newOpacity);
         });
         print('$opacityCheck');
+        widget.onMove();
       },
       onPanEnd: (details) {
+        widget.onMoveEnd();
         setState(() {
           opacity = 1;
         });
