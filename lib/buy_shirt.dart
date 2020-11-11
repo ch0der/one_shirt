@@ -131,7 +131,7 @@ class _BuyShirtPageState extends State<BuyShirtPage> {
         height: 50,
         width: 50,
         decoration: BoxDecoration(
-          image: DecorationImage(image: AssetImage('assets/logoDesign5.png')),
+          image: DecorationImage(image: AssetImage('assets/shitdesign1.png')),
         ),
       ),
     );
