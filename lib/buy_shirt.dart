@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class BuyShirtPage extends StatefulWidget {
@@ -10,33 +11,98 @@ class _BuyShirtPageState extends State<BuyShirtPage> {
   List<BuyButtonModel> sampleColorData = List<BuyButtonModel>();
   Color _shirtColor = Colors.grey;
   String testShirt = 'assets/images/logo.png';
-
+  String testLogo1 = 'assets/logoDesign4.png';
+  ScrollController _controller = ScrollController();
 
   @override
   void initState() {
     super.initState();
 
+    sampleSizeData.add(
+        BuyButtonModel(isSelected: false, text: 'S', colorSelected: false));
+    sampleSizeData.add(
+        BuyButtonModel(isSelected: false, text: 'M', colorSelected: false));
+    sampleSizeData.add(
+        BuyButtonModel(isSelected: false, text: 'L', colorSelected: false));
+    sampleSizeData.add(
+        BuyButtonModel(isSelected: false, text: 'XL', colorSelected: false));
+    sampleSizeData.add(
+        BuyButtonModel(isSelected: false, text: '2XL', colorSelected: false));
 
-    sampleSizeData.add(BuyButtonModel(isSelected: false, text: 'S'));
-    sampleSizeData.add(BuyButtonModel(isSelected: false, text: 'M'));
-    sampleSizeData.add(BuyButtonModel(isSelected: false, text: 'L'));
-    sampleSizeData.add(BuyButtonModel(isSelected: false, text: 'XL'));
-    sampleSizeData.add(BuyButtonModel(isSelected: false, text: '2XL'));
+    sampleColorData.add(BuyButtonModel(
+        isSelected: false,
+        text: ' ',
+        color: Colors.blue[300],
+        colorSelected: false));
+    sampleColorData.add(BuyButtonModel(
+        isSelected: false,
+        text: ' ',
+        color: Colors.green[400],
+        colorSelected: false));
+    sampleColorData.add(BuyButtonModel(
+        isSelected: false,
+        text: ' ',
+        color: Colors.red[300],
+        colorSelected: false));
+    sampleColorData.add(BuyButtonModel(
+        isSelected: false,
+        text: ' ',
+        color: Colors.orange[300],
+        colorSelected: false));
+    sampleColorData.add(BuyButtonModel(
+        isSelected: false,
+        text: ' ',
+        color: Colors.grey,
+        colorSelected: false));
+    sampleColorData.add(BuyButtonModel(
+        isSelected: false,
+        text: ' ',
+        color: Colors.blue[300],
+        colorSelected: false));
+    sampleColorData.add(BuyButtonModel(
+        isSelected: false,
+        text: ' ',
+        color: Colors.green[400],
+        colorSelected: false));
+    sampleColorData.add(BuyButtonModel(
+        isSelected: false,
+        text: ' ',
+        color: Colors.red[300],
+        colorSelected: false));
+    sampleColorData.add(BuyButtonModel(
+        isSelected: false,
+        text: ' ',
+        color: Colors.orange[300],
+        colorSelected: false));
 
-    sampleColorData.add(BuyButtonModel(isSelected: false,text: ' ',color: Colors.blue[300]));
-    sampleColorData.add(BuyButtonModel(isSelected: false,text: ' ',color: Colors.green[400]));
-    sampleColorData.add(BuyButtonModel(isSelected: false,text: ' ',color: Colors.red[300]));
-    sampleColorData.add(BuyButtonModel(isSelected: false,text: ' ',color: Colors.orange[300]));
-    sampleColorData.add(BuyButtonModel(isSelected: false,text: ' ',color: Colors.grey));
-    sampleColorData.add(BuyButtonModel(isSelected: false,text: ' ',color: Colors.blue[300]));
-    sampleColorData.add(BuyButtonModel(isSelected: false,text: ' ',color: Colors.green[400]));
-    sampleColorData.add(BuyButtonModel(isSelected: false,text: ' ',color: Colors.red[300]));
-    sampleColorData.add(BuyButtonModel(isSelected: false,text: ' ',color: Colors.orange[300]));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_controller.hasClients) {
+        _controller.animateTo(500,
+            duration: Duration(seconds: 40), curve: Curves.linear);
+      }
+    });
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
+
+      appBar: AppBar(
+        backgroundColor: Colors.green[500],
+        leading: Icon(Icons.arrow_back),
+        title: Center(child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            logo(),
+            appBarText(),
+          ],
+        )),
+        actions: [
+          Icon(Icons.settings)
+        ],
+
+      ),
       body: body(),
+      persistentFooterButtons: [purchaseButton(),Container(width: 20,height: 50,)],//fix later
     );
   }
 
@@ -49,7 +115,7 @@ class _BuyShirtPageState extends State<BuyShirtPage> {
           columnHeader('Size'),
           Padding(padding: EdgeInsets.only(top: 10)),
           sizeListView(),
-          Padding(padding: EdgeInsets.only(top: 10)),
+          Padding(padding: EdgeInsets.only(top: 5)),
           columnHeader('Color'),
           Padding(padding: EdgeInsets.only(top: 10)),
           colorListView(),
@@ -58,9 +124,35 @@ class _BuyShirtPageState extends State<BuyShirtPage> {
     );
   }
 
+  logo(){
+    return FittedBox(
+      fit: BoxFit.fitHeight,
+      child: Container(
+        height: 50,
+        width: 50,
+        decoration: BoxDecoration(
+          image: DecorationImage(image: AssetImage('assets/logoDesign5.png')),
+        ),
+      ),
+    );
+  }
+  appBarText(){
+    return Text(' OneShirt     ',style: TextStyle(fontSize: 30),);
+  }
+
   primaryPadding() {
     return Padding(
       padding: EdgeInsets.only(top: 15),
+    );
+  }
+
+  purchaseButton() {
+    return ClipRRect(
+      child: Container(
+          height: 50,
+          width: screenSize(context).width * .8,
+          child: FlatButton(
+              color: Colors.green[800], onPressed: () {}, child: Container())),
     );
   }
 
@@ -114,7 +206,8 @@ class _BuyShirtPageState extends State<BuyShirtPage> {
       ),
     );
   }
-  colorListView(){
+
+  colorListView() {
     return Container(
       height: 50,
       width: 330,
@@ -124,15 +217,21 @@ class _BuyShirtPageState extends State<BuyShirtPage> {
         ),
         scrollDirection: Axis.horizontal,
         itemCount: sampleColorData.length,
+        controller: _controller,
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
             onTap: () {
               setState(() {
+                sampleColorData.forEach((element) {
+                  element.colorSelected = false;
+                });
+                sampleColorData[index].colorSelected = true;
                 _shirtColor = sampleColorData[index].color;
               });
             },
             child: ColorFiltered(
-              colorFilter: ColorFilter.mode(sampleColorData[index].color, BlendMode.modulate),
+                colorFilter: ColorFilter.mode(
+                    sampleColorData[index].color, BlendMode.modulate),
                 child: BuyDetailsButton(sampleColorData[index])),
           );
         },
@@ -140,8 +239,7 @@ class _BuyShirtPageState extends State<BuyShirtPage> {
     );
   }
 
-
-  shirtPicWithImage(){
+  shirtPicWithImage() {
     return Stack(
       alignment: Alignment.topCenter,
       children: [
@@ -149,17 +247,15 @@ class _BuyShirtPageState extends State<BuyShirtPage> {
         Column(
           children: [
             Container(
-              height: 100,
+              height: 50,
             ),
             testLogo(),
           ],
         )
-
-
       ],
     );
-
   }
+
   testLogo() {
     return Opacity(
       opacity: .8,
@@ -167,7 +263,6 @@ class _BuyShirtPageState extends State<BuyShirtPage> {
         height: 30,
         width: 80,
         decoration: BoxDecoration(
-          color: Colors.white,
           image: DecorationImage(
             image: AssetImage(testShirt),
           ),
@@ -176,7 +271,6 @@ class _BuyShirtPageState extends State<BuyShirtPage> {
     );
   }
 
-
   shirtPic() {
     String photo = "assets/images/gshirt.png";
     return Hero(
@@ -184,7 +278,7 @@ class _BuyShirtPageState extends State<BuyShirtPage> {
       child: ColorFiltered(
         colorFilter: ColorFilter.mode(_shirtColor, BlendMode.modulate),
         child: Container(
-          height: 350,
+          height: 300,
           width: 250,
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -197,14 +291,13 @@ class _BuyShirtPageState extends State<BuyShirtPage> {
   }
 }
 
-
 class BuyButtonModel {
   bool isSelected;
+  bool colorSelected;
   final String text;
-  final ColorFiltered colorFiltered;
   final Color color;
 
-  BuyButtonModel({this.isSelected, this.text,this.colorFiltered,this.color});
+  BuyButtonModel({this.isSelected, this.text, this.color, this.colorSelected});
 }
 
 class BuyDetailsButton extends StatelessWidget {
@@ -216,6 +309,7 @@ class BuyDetailsButton extends StatelessWidget {
     Size size1 = Size(50, 50);
 
     return AnimatedContainer(
+      curve: Curves.easeOut,
       height: size1.height,
       width: size1.width,
       duration: Duration(milliseconds: 150),
@@ -228,6 +322,9 @@ class BuyDetailsButton extends StatelessWidget {
               color: Colors.black.withOpacity(.5),
             )
           ],
+          border: _model.colorSelected
+              ? Border.all(width: 1.5, color: Colors.black)
+              : null,
           color: _model.isSelected ? Colors.green[300] : Colors.grey[350]),
       child: Center(
         child: FittedBox(
