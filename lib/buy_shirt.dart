@@ -14,6 +14,7 @@ class _BuyShirtPageState extends State<BuyShirtPage> {
   String testLogo1 = 'assets/logoDesign4.png';
   ScrollController _controller = ScrollController();
 
+
   @override
   void initState() {
     super.initState();
@@ -268,6 +269,18 @@ class _BuyShirtPageState extends State<BuyShirtPage> {
           ),
         ),
       ),
+    );
+  }
+  demoImage(String image){
+    return Container(
+      height: 100,
+      width: 100,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(image),
+        ),
+      ),
+
     );
   }
 

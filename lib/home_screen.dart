@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:random_color/random_color.dart';
 import 'dart:math';
 import 'package:flutter/physics.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 
 class HomeScreen2 extends StatefulWidget {
   @override
@@ -16,28 +17,25 @@ class _HomeScreen2State extends State<HomeScreen2> {
   double buyOpacity = 1;
   String testShirt = 'assets/images/logo.png';
   String shirt = "assets/images/gshirt.png";
-  List<TShirt> shirtList = [
-    TShirt(),
-    TShirt(),
-    TShirt(),
-    TShirt(),
-    TShirt(),
-    TShirt(),
-    TShirt(),
-    TShirt(),
-    TShirt(),
-    TShirt(),
-    TShirt(),
-    TShirt(),
-  ];
+
+  List<ImageModel> sampleImages = List<ImageModel>();
 
   @override
+  void initState() {
+    super.initState();
+    sampleImages.add(ImageModel(image: 'assets/demo_images/Bucks.png'));
+    sampleImages.add(ImageModel(image: 'assets/demo_images/Bulls.png'));
+    sampleImages.add(ImageModel(image: 'assets/demo_images/Magic.png'));
+    sampleImages.add(ImageModel(image: 'assets/demo_images/Nets.png'));
+    sampleImages.add(ImageModel(image: 'assets/demo_images/Nuggets.png'));
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation:
           FloatingActionButtonLocation.miniCenterFloat,
       floatingActionButton: buyButton2(),
-      body: body(),
+      body: body2(),
     );
   }
 
@@ -75,6 +73,15 @@ class _HomeScreen2State extends State<HomeScreen2> {
             });
           },
         ),
+      ],
+    );
+  }
+  body2(){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        shirtListViewer(),
       ],
     );
   }
@@ -120,6 +127,39 @@ class _HomeScreen2State extends State<HomeScreen2> {
             style: TextStyle(fontSize: 50, color: Colors.grey[50]),
           )),
         ),
+      ),
+    );
+  }
+
+  shirtListViewer() {
+    return Container(
+      height: screenSize(context).height * .8,
+      width: screenSize(context).width * .85,
+      child: Swiper(
+        autoplay: false,
+        layout: SwiperLayout.TINDER,
+        loop: false,
+
+        itemCount: sampleImages.length,
+        itemHeight: screenSize(context).height * .8,
+        itemWidth: screenSize(context).width * .85,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            height: screenSize(context).height * .8,
+            width: screenSize(context).width * .85,
+            color: Colors.blue,
+            child: Center(
+                child: Container(
+              height: 100,
+              width: 100,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(sampleImages[index].image),
+                ),
+              ),
+            )),
+          );
+        },
       ),
     );
   }
@@ -621,5 +661,28 @@ class _RandomDesignState extends State<RandomDesign> {
   @override
   Widget build(BuildContext context) {
     return Stack();
+  }
+}
+
+class ImageModel {
+  final String image;
+  ImageModel({this.image});
+}
+
+class TestShirtImage extends StatelessWidget {
+  final ImageModel _imageModel;
+  TestShirtImage(this._imageModel);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 100,
+      width: 100,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(_imageModel.image),
+        ),
+      ),
+    );
   }
 }
